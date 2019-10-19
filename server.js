@@ -1,14 +1,16 @@
 const express = require("express");
 const mongodb = require("mongodb");
 const bcrypt = require("bcryptjs");
-const port = process.env.PORT;
-const jwt_key = process.env.jwt_key;
+//const port = process.env.PORT;
+//const jwt_key = process.env.jwt_key;
 
 const jwt = require("jsonwebtoken");
 const dataB = "BUU";
 const col_name = "users";
 const env = "./db";
 const auth = require("./auth");
+
+const { port,jwt_key } = require('./config')
 
 const app = express();
 app.use(express.json());
@@ -58,7 +60,10 @@ app.post("/sign-in", async (req, res) => {
     res.status(400).json({ error: user });
     return;
   }
-  let token = await jwt.sign({ email: user.email, id: user._id }, jwt_key);
+
+  let token = await jwt.sign({ email: user.email, id: user._id }, jwt_key ,{
+    expiresIn: 30
+  });
   // let passwordIsValid = await bcrypt.compare(password,user.password)
   // if(!passwordIsValid){
   //     res.status(401).json({error : `Username or Password not match`})
